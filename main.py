@@ -13,7 +13,7 @@ COLOR_RED = '\033[91m'     # Errors, Warnings
 COLOR_RESET = '\033[0m'    # Reset color
 
 # --- CONFIGURATION ---
-ENTRY_FILENAME = 'log_entry.md' 
+ENTRY_FILENAME = 'log_entry.md'
 DEFAULT_DATA_FOLDER_ROOT = 'data' 
 FRONT_MATTER_DELIMITER = '---'
 
@@ -210,6 +210,58 @@ def open_entry_folder(choice_index, entries_list):
         print(f"{COLOR_RED}[Error] Invalid number. Please enter a number shown in the 'list' output.{COLOR_RESET}")
 
 
+
+def open_in_editor(file_path):
+    """Open a file in the user's default editor (cross-platform). Blocks until editor closes."""
+    import subprocess, sys, os
+    try:
+        if sys.platform == "win32":
+            editor = os.environ.get("EDITOR")
+            if editor:
+                subprocess.Popen([editor, file_path]).wait()
+            else:
+                # Try VS Code, else Notepad
+                try:
+                    subprocess.Popen(["code", file_path]).wait()
+                except Exception:
+                    subprocess.Popen(["notepad", file_path]).wait()
+        elif sys.platform == "darwin":
+            editor = os.environ.get("EDITOR")
+            if editor:
+                subprocess.Popen([editor, file_path]).wait()
+            else:
+                subprocess.Popen(["open", "-e", file_path]).wait()  # TextEdit
+        else:
+            editor = os.environ.get("EDITOR", "nano")
+            subprocess.Popen([editor, file_path]).wait()
+        return True
+    except Exception as e:
+        print(f"{COLOR_RED}[Error] Could not open editor: {e}{COLOR_RESET}")
+        return False
+
+
+def edit_markdown(choice_index, entries_list):
+    """Open the entry's markdown in an external editor; re-parse and normalize after editing."""
+    if 0 <= choice_index < len(entries_list):
+        entry = entries_list[choice_index]
+        md_path = os.path.join(entry['data_folder'], ENTRY_FILENAME)
+        if not os.path.exists(md_path):
+            print(f"{COLOR_RED}[Error] Markdown file not found: {md_path}{COLOR_RESET}")
+            return False
+        if open_in_editor(md_path):
+            with open(md_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            metadata, description = parse_markdown_entry(content)
+            # Preserve data_folder; keep timestamp as-is
+            metadata['data_folder'] = entry['data_folder']
+            metadata['description'] = description
+            save_entry_metadata(metadata, description)
+            print(f"{COLOR_GREEN}Markdown updated and metadata normalized.{COLOR_RESET}")
+            return True
+        return False
+    print(f"{COLOR_RED}[Error] Invalid number. Please enter a number shown in the 'list' output.{COLOR_RESET}")
+    return False
+
 def edit_entry(choice_index, entries_list):
     """Allows editing the title (metadata) and description (markdown body) of an existing entry."""
     if 0 <= choice_index < len(entries_list):
@@ -361,84 +413,38 @@ def main():
                     print(f"{COLOR_RED}[Error] Invalid entry number provided. Must be an integer.{COLOR_RESET}")
 
 
-            elif command == 'sel':
+            elif command == 'show':
                 if not args:
-                    print(f"{COLOR_RED}[Error] Usage: sel <entry_number>{COLOR_RESET}")
+                    print(f"{COLOR_RED}[Error] Usage: show <entry_number>{COLOR_RESET}")
                     continue
-
                 try:
                     entry_number = int(args[0])
                     if entries:
                         index = entry_number - 1
-                        
-                        # Removed deletion logic, view_entry now only displays
-                        deletion_happened = view_entry(index, entries) 
-                        
-                        if deletion_happened: 
-                            # If deletion logic was re-added later, this handles it
-                            entries.clear()
-                            entries.extend(load_entries())
-                            sorted_entries = list_entries(entries)
+                        view_entry(index, entries)
                     else:
-                        print(f"{COLOR_RED}[Error] No entries to select. Use 'new' to create one.{COLOR_RESET}")
-                        
+                        print(f"{COLOR_RED}[Error] No entries to show. Use 'new' to create one.{COLOR_RESET}")
                 except ValueError:
                     print(f"{COLOR_RED}[Error] Invalid entry number provided. Must be an integer.{COLOR_RESET}")
-            
+                        
             elif command == 'edit':
                 if not args:
                     print(f"{COLOR_RED}[Error] Usage: edit <entry_number>{COLOR_RESET}")
                     continue
-
                 try:
                     entry_number = int(args[0])
                     if entries:
                         index = entry_number - 1
-                        
-                        edit_success = edit_entry(index, entries)
-                        
+                        edit_success = edit_markdown(index, entries)
                         if edit_success:
                             entries.clear()
                             entries.extend(load_entries())
                             sorted_entries = list_entries(entries)
                     else:
                         print(f"{COLOR_RED}[Error] No entries to edit. Use 'new' to create one.{COLOR_RESET}")
-                        
                 except ValueError:
                     print(f"{COLOR_RED}[Error] Invalid entry number provided. Must be an integer.{COLOR_RESET}")
             
-            elif command == 'del':
-                if not args:
-                    print(f"{COLOR_RED}[Error] Usage: del <entry_number>{COLOR_RESET}")
-                    continue
-
-                try:
-                    entry_number = int(args[0])
-                    if entries:
-                        index = entry_number - 1
-                        
-                        selected_entry = entries[index]
-                        
-                        confirm = input(f"{COLOR_RED}Are you sure you want to delete entry {entry_number} ('{selected_entry['title']}') and its folder ({selected_entry['data_folder']})? (Y/n): {COLOR_RESET}").lower()
-                        
-                        if confirm == 'y':
-                            shutil.rmtree(selected_entry['data_folder'])
-                            print(f"\n{COLOR_GREEN}[Success] Entry directory deleted and logbook updated.{COLOR_RESET}")
-                            entries.clear()
-                            entries.extend(load_entries())
-                            sorted_entries = list_entries(entries)
-                        else:
-                            print(f"{COLOR_YELLOW}Deletion cancelled.{COLOR_RESET}")
-                            
-                    else:
-                        print(f"{COLOR_RED}[Error] No entries to delete.{COLOR_RESET}")
-                        
-                except IndexError:
-                    print(f"{COLOR_RED}[Error] Invalid entry number.{COLOR_RESET}")
-                except Exception as e:
-                    print(f"{COLOR_RED}[Error] Failed to delete: {e}{COLOR_RESET}")
-
-
             elif command == 'help':
                 print(f"\n{COLOR_BLUE}--- Available Commands ---{COLOR_RESET}")
                 print(f"{COLOR_GREEN}new{COLOR_RESET}               : Create a new logbook entry (creates folder and {ENTRY_FILENAME}).")
