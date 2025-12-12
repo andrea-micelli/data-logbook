@@ -1,0 +1,90 @@
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER
+import yaml
+import os
+from datetime import datetime
+
+# --- DATA MANAGEMENT FUNCTIONS (Unchanged) ---
+
+def parse_markdown_entry(content):
+    """
+    Parses a Markdown file content string expecting YAML Front Matter.
+    Returns a tuple: (metadata_dict, markdown_body)
+    """
+    parts = content.split(FRONT_MATTER_DELIMITER, 2)
+    
+    if len(parts) < 3:
+        return {"title": "Error: Invalid Format", "timestamp": "N/A"}, content
+
+    yaml_block = parts[1].strip()
+    markdown_body = parts[2].strip()
+
+    try:
+        metadata = yaml.safe_load(yaml_block)
+        if not isinstance(metadata, dict):
+             raise yaml.YAMLError("YAML front matter is not a dictionary.")
+        return metadata, markdown_body
+    except yaml.YAMLError:
+        return {"title": "Error: YAML Parse Fail", "timestamp": "N/A"}, content
+
+
+def load_entries():
+    """Scans the DEFAULT_DATA_FOLDER_ROOT for entry directories and loads their metadata."""
+    entries = []
+    
+    if not os.path.exists(DEFAULT_DATA_FOLDER_ROOT):
+        print(f"{COLOR_YELLOW}Data directory '{DEFAULT_DATA_FOLDER_ROOT}' not found. No entries loaded.{COLOR_RESET}")
+        os.makedirs(DEFAULT_DATA_FOLDER_ROOT, exist_ok=True)
+        return []
+
+    for item_name in os.listdir(DEFAULT_DATA_FOLDER_ROOT):
+        entry_folder_path = os.path.join(DEFAULT_DATA_FOLDER_ROOT, item_name)
+        entry_file_path = os.path.join(entry_folder_path, ENTRY_FILENAME)
+
+        if os.path.isdir(entry_folder_path) and os.path.exists(entry_file_path):
+            try:
+                with open(entry_file_path, 'r') as f:
+                    content = f.read()
+                
+                metadata, description = parse_markdown_entry(content)
+                
+                if 'title' in metadata and 'timestamp' in metadata:
+                    entry = metadata
+                    entry['description'] = description
+                    entry['data_folder'] = entry_folder_path
+                    entries.append(entry)
+                else:
+                    print(f"{COLOR_RED}Warning: Skipping {entry_file_path} (missing title/timestamp in metadata).{COLOR_RESET}")
+
+            except Exception as e:
+                print(f"{COLOR_RED}Unexpected error loading entry {entry_folder_path}: {e}{COLOR_RESET}")
+
+    entries.sort(key=lambda x: x.get('timestamp', datetime.min), reverse=True)
+    return entries
+
+def save_entry_metadata(entry, description_body):
+    """Saves the entry's metadata and description body into its entry_filename file."""
+    if 'data_folder' not in entry:
+        print(f"{COLOR_RED}[Error] Cannot save entry: missing 'data_folder' path.{COLOR_RESET}")
+        return
+
+    entry_file_path = os.path.join(entry['data_folder'], ENTRY_FILENAME)
+    
+    try:
+        os.makedirs(entry['data_folder'], exist_ok=True)
+
+        save_metadata = {k: v for k, v in entry.items() if k not in ['description', 'data_folder']}
+        
+        yaml_front_matter = f"{FRONT_MATTER_DELIMITER}\n"
+        yaml_front_matter += yaml.dump(save_metadata, default_flow_style=False)
+        yaml_front_matter += f"{FRONT_MATTER_DELIMITER}\n\n"
+
+        full_content = yaml_front_matter + description_body.strip() + "\n"
+        
+        with open(entry_file_path, 'w') as f:
+            f.write(full_content)
+            
+        print(f"{COLOR_GREEN}Entry saved to: {entry_file_path}{COLOR_RESET}")
+    except IOError as e:
+        print(f"{COLOR_RED}Error writing entry file {entry_file_path}: {e}{COLOR_RESET}")
+    except Exception as e:
+        print(f"{COLOR_RED}An unexpected error occurred during saving: {e}{COLOR_RESET}")
