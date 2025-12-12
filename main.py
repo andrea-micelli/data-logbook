@@ -1,4 +1,4 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER # noqa: F401
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER, STYLE_BOLD # noqa: F401
 from commands import list_entries, view_entry, open_entry_folder, open_in_editor, edit_markdown, edit_entry, create_entry # noqa: F401
 from data_managment import parse_markdown_entry, load_entries, save_entry_metadata  # noqa: F401
 
@@ -6,10 +6,9 @@ from data_managment import parse_markdown_entry, load_entries, save_entry_metada
 
 def main():
     """Main function to run the logbook application with a command-line interface."""
-    
-    print(f"{COLOR_BLUE}=============================================")
-    print( "  Lab Measurement Logbook Manager (CLI)")
-    print(f"============================================={COLOR_RESET}")
+
+    print(f"{STYLE_BOLD}{COLOR_BLUE}Measurement Logbook{COLOR_RESET}")
+    print()
     
     entries = load_entries() 
     
@@ -39,7 +38,6 @@ def main():
                 create_entry(entries)
                 sorted_entries = list_entries(entries)
 
-            # New command: open <n>
             elif command == 'open':
                 if not args:
                     print(f"{COLOR_RED}[Error] Usage: open <entry_number>{COLOR_RESET}")
@@ -92,10 +90,9 @@ def main():
                 print(f"\n{COLOR_BLUE}--- Available Commands ---{COLOR_RESET}")
                 print(f"{COLOR_GREEN}new{COLOR_RESET}               : Create a new logbook entry (creates folder and {ENTRY_FILENAME}).")
                 print(f"{COLOR_GREEN}list (or ls){COLOR_RESET}      : Display the chronological list of entries.")
-                print(f"{COLOR_GREEN}sel <number>{COLOR_RESET}      : Select an entry to view metadata and raw Markdown.")
-                print(f"{COLOR_GREEN}edit <number>{COLOR_RESET}     : Edit the title and description of an existing entry.")
+                print(f"{COLOR_GREEN}show <number>{COLOR_RESET}      : Select an entry to view metadata and raw Markdown.")
                 print(f"{COLOR_GREEN}open <number>{COLOR_RESET}     : Open the entry's folder in file explorer and select the {ENTRY_FILENAME} file.")
-                print(f"{COLOR_GREEN}del <number>{COLOR_RESET}      : Permanently delete the entry and its entire data folder after confirmation.")
+                print(f"{COLOR_GREEN}edit <number>{COLOR_RESET}     : Open the log_entry.md file in the default editor.")
                 print(f"{COLOR_GREEN}quit (or exit){COLOR_RESET}    : Exit the application.")
                 print(f"{COLOR_BLUE}--------------------------{COLOR_RESET}")
 

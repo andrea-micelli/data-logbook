@@ -18,8 +18,7 @@ def list_entries(entries):
 
     sorted_entries = entries 
 
-    print(f"\n{COLOR_BLUE}--- Measurement Logbook (Chronological) ---")
-    print( "No. | Date/Time          | Title")
+    print(f"{COLOR_BLUE}No. | {"Date":^10} | Title")
     print(f"-----------------------------------------------------------------{COLOR_RESET}")
     for i, entry in enumerate(sorted_entries):
         index = i + 1
