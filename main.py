@@ -1,6 +1,6 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER
-from commands import list_entries, view_entry, open_entry_folder, open_in_editor, edit_markdown, edit_entry, create_entry
-from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER # noqa: F401
+from commands import list_entries, view_entry, open_entry_folder, open_in_editor, edit_markdown, edit_entry, create_entry # noqa: F401
+from data_managment import parse_markdown_entry, load_entries, save_entry_metadata  # noqa: F401
 
 # --- MAIN EXECUTION (CLI) ---
 
@@ -8,7 +8,7 @@ def main():
     """Main function to run the logbook application with a command-line interface."""
     
     print(f"{COLOR_BLUE}=============================================")
-    print(f"  Lab Measurement Logbook Manager (CLI)")
+    print( "  Lab Measurement Logbook Manager (CLI)")
     print(f"============================================={COLOR_RESET}")
     
     entries = load_entries() 

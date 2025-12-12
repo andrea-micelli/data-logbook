@@ -1,4 +1,4 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, DEFAULT_DATA_FOLDER_ROOT, FRONT_MATTER_DELIMITER # noqa: F401
 import os
 from datetime import datetime
 from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
@@ -19,7 +19,7 @@ def list_entries(entries):
     sorted_entries = entries 
 
     print(f"\n{COLOR_BLUE}--- Measurement Logbook (Chronological) ---")
-    print(f"No. | Date/Time          | Title")
+    print( "No. | Date/Time          | Title")
     print(f"-----------------------------------------------------------------{COLOR_RESET}")
     for i, entry in enumerate(sorted_entries):
         index = i + 1
