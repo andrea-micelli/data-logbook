@@ -1,12 +1,9 @@
 from constants import (COLOR_BLUE,COLOR_GREEN,COLOR_YELLOW,COLOR_RED,COLOR_RESET,ENTRY_FILENAME,DEFAULT_DATA_FOLDER_ROOT,FRONT_MATTER_DELIMITER,STYLE_BOLD,)  # noqa: F401
 from commands import (list_entries,view_entry,open_entry_folder,open_in_editor,edit_markdown,edit_entry,create_entry,filter_entries,reset_active)  # noqa: F401
 from data_managment import (parse_markdown_entry,load_entries,save_entry_metadata,)  # noqa: F401
-from init import DATA_DIR
+
 
 def main():
-    print(DATA_DIR)
-    return
-
     entries = load_entries()
     active = entries
 
