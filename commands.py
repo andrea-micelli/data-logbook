@@ -9,6 +9,7 @@ from utility import format_timestamp, open_folder_in_explorer
 
 # --- INTERACTION FUNCTIONS (Updated view_entry) ---
 
+def list_entries(entries, filter):
     """Displays a numbered, chronological list of all entries (title and date)."""
     print()  # newline as spacing
     if filter:
