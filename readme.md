@@ -1,0 +1,2 @@
+# Initialization
+Run "run.bat" file, once it is run for the first time, it will create the config.yaml file. Once the file is created, onpen it and write the desired root folder in the 'data_dir' field.
