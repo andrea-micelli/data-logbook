@@ -5,15 +5,14 @@ from constants import (
     COLOR_RED,
     COLOR_RESET,
     ENTRY_FILENAME,
-    DEFAULT_DATA_FOLDER_ROOT,
     FRONT_MATTER_DELIMITER,
 )  # noqa: F401
 import yaml
 import os
 from datetime import datetime
+from init import DEFAULT_DATA_FOLDER_ROOT
 
 # --- DATA MANAGEMENT FUNCTIONS (Unchanged) ---
-
 
 def parse_markdown_entry(content):
     """

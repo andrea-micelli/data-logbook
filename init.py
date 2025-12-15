@@ -28,4 +28,4 @@ def load_config():
 
     return data_dir
 
-DATA_DIR = load_config()
+DEFAULT_DATA_FOLDER_ROOT = load_config()
