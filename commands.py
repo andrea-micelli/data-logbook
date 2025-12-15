@@ -9,8 +9,16 @@ from utility import format_timestamp, open_folder_in_explorer
 
 # --- INTERACTION FUNCTIONS (Updated view_entry) ---
 
-def list_entries(entries):
     """Displays a numbered, chronological list of all entries (title and date)."""
+    print()  # newline as spacing
+    if filter:
+        print("Filters: ", end="")
+        for key in filter.keys():
+            print(f"{key}:{filter[key]}  ", end="")
+        print()
+    else: 
+        print("No current filter")
+
     if not entries:
         print(f"\n{COLOR_YELLOW}--- Logbook is Empty ---")
         print(f"No entries recorded yet. Use 'new' to create an entry.{COLOR_RESET}")
@@ -24,7 +32,7 @@ def list_entries(entries):
         index = i + 1
         date_str = format_timestamp(entry.get('timestamp'))
         title = entry.get('title', 'NO TITLE')
-        print(f"{index:<3} | {date_str:<18} | {COLOR_BLUE}{title[:45]:<45}{COLOR_RESET}")
+        print(f"{index:<3} | {date_str:<10} | {COLOR_BLUE}{title[:45]:<45}{COLOR_RESET}")
 
     return sorted_entries
 
@@ -215,3 +223,15 @@ def create_entry(entries):
     # Reload from disk to update the in-memory list
     entries.clear()
     entries.extend(load_entries())
+
+
+def filter_entries(entries, field, value):
+    active = list()
+    for e in entries:
+        ans = e.get(field, "")
+        if value in ans:
+            active.append(e)
+    return active
+
+def reset_active(entries):
+    return entries

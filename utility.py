@@ -46,5 +46,5 @@ def open_folder_in_explorer(path, select_file=None):
 def format_timestamp(ts):
     """Converts a datetime object or string back into a readable date string."""
     if isinstance(ts, datetime):
-        return ts.strftime("%Y-%m-%d %H:%M:%S")
+        return ts.strftime("%Y-%m-%d")
     return str(ts)

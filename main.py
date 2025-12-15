@@ -1,14 +1,16 @@
 from constants import (COLOR_BLUE,COLOR_GREEN,COLOR_YELLOW,COLOR_RED,COLOR_RESET,ENTRY_FILENAME,DEFAULT_DATA_FOLDER_ROOT,FRONT_MATTER_DELIMITER,STYLE_BOLD,)  # noqa: F401
-from commands import (list_entries,view_entry,open_entry_folder,open_in_editor,edit_markdown,edit_entry,create_entry,)  # noqa: F401
+from commands import (list_entries,view_entry,open_entry_folder,open_in_editor,edit_markdown,edit_entry,create_entry,filter_entries,reset_active)  # noqa: F401
 from data_managment import (parse_markdown_entry,load_entries,save_entry_metadata,)  # noqa: F401
 
 
 def main():
     entries = load_entries()
+    active = entries
 
     print(f"{STYLE_BOLD}{COLOR_BLUE}Measurement Logbook{COLOR_RESET}\n")
 
-    sorted_entries = list_entries(entries)  # Initial list display
+    active_filter = dict()
+    list_entries(active, active_filter)  # Initial list display
 
     print(f"\n{COLOR_YELLOW}Enter 'help' for commands, or 'quit' to exit.{COLOR_RESET}")
 
@@ -31,11 +33,12 @@ def main():
                     break
 
                 case "list" | "ls":  # Lists all measurements
-                    sorted_entries = list_entries(entries)
+                    list_entries(active, active_filter)
 
                 case "new" | "nw":  # Creates new entry
                     create_entry(entries)
-                    sorted_entries = list_entries(entries)
+                    active = reset_active(entries)
+                    list_entries(active, active_filter)
 
                 case "open" | "op":  # Opens the folder containing the measurements
                     if not args:  # if arg list is empty
@@ -44,9 +47,9 @@ def main():
 
                     try:
                         entry_number = int(args[0])
-                        if entries:
+                        if active:
                             index = entry_number - 1
-                            open_entry_folder(index, entries)
+                            open_entry_folder(index, active)
                         else:
                             print(f"{COLOR_RED}[Error] No entries to open.{COLOR_RESET}")
                     except ValueError:
@@ -58,11 +61,11 @@ def main():
                         continue
                     try:
                         entry_number = int(args[0])
-                        if entries:
+                        if active:
                             index = entry_number - 1
-                            view_entry(index, entries)
+                            view_entry(index, active)
                         else:
-                            print(f"{COLOR_RED}[Error] No entries to show. Use 'new' to create one.{COLOR_RESET}")
+                            print(f"{COLOR_RED}[Error] No entries to show.{COLOR_RESET}")
                     except ValueError:
                         print(f"{COLOR_RED}[Error] Invalid entry number provided. Must be an integer.{COLOR_RESET}")
 
@@ -72,25 +75,42 @@ def main():
                         continue
                     try:
                         entry_number = int(args[0])
-                        if entries:
+                        if active:
                             index = entry_number - 1
-                            edit_success = edit_markdown(index, entries)
+                            edit_success = edit_markdown(index, active)
                             if edit_success:
                                 entries.clear()
                                 entries.extend(load_entries())
-                                sorted_entries = list_entries(entries)
+                                active = reset_active(entries) # TODO implementare qui un recupero dei filtri invece di un reset
+                                list_entries(active, active_filter)
                         else:
                             print(f"{COLOR_RED}[Error] No entries to edit. Use 'new' to create one.{COLOR_RESET}")
                     except ValueError:
                         print(f"{COLOR_RED}[Error] Invalid entry number provided. Must be an integer.{COLOR_RESET}")
 
+                case "search" | "src":
+                    if len(args) != 2:
+                        print("[Error] Correct usage: 'search <field> <text>'")
+                        continue
+                    active_filter[args[0]] = args[1]
+                    active = filter_entries(active, field=args[0], value=args[1])
+                    list_entries(active, active_filter)
+
+                    
+                case "reset" | "rst":
+                    active = reset_active(entries)
+                    active_filter = dict()
+                    list_entries(active, active_filter)
+
                 case "help" | "hp":
                     print(f"\n{COLOR_BLUE}--- Available Commands ---{COLOR_RESET}")
-                    print(f"{COLOR_GREEN}new{COLOR_RESET}               : Create a new logbook entry (creates folder and {ENTRY_FILENAME}).")
-                    print(f"{COLOR_GREEN}list (or ls){COLOR_RESET}      : Display the chronological list of entries.")
-                    print(f"{COLOR_GREEN}show <number>{COLOR_RESET}     : Select an entry to view metadata and raw Markdown.")
-                    print(f"{COLOR_GREEN}open <number>{COLOR_RESET}     : Open the entry's folder in file explorer and select the {ENTRY_FILENAME} file.")
-                    print(f"{COLOR_GREEN}edit <number>{COLOR_RESET}     : Open the log_entry.md file in the default editor.")
+                    print(f"{COLOR_GREEN}new{COLOR_RESET}                   : Create a new logbook entry (creates folder and {ENTRY_FILENAME}).")
+                    print(f"{COLOR_GREEN}list (or ls){COLOR_RESET}          : Display the chronological list of entries.")
+                    print(f"{COLOR_GREEN}show <number>{COLOR_RESET}         : Select an entry to view metadata and raw Markdown.")
+                    print(f"{COLOR_GREEN}open <number>{COLOR_RESET}         : Open the entry's folder in file explorer and select the {ENTRY_FILENAME} file.")
+                    print(f"{COLOR_GREEN}edit <number>{COLOR_RESET}         : Open the log_entry.md file in the default editor.")
+                    print(f"{COLOR_GREEN}search <field> <text>{COLOR_RESET} : Add filter.")
+                    print(f"{COLOR_GREEN}reset{COLOR_RESET}                 : Reset filters.")
                     print(f"{COLOR_GREEN}quit (or exit){COLOR_RESET}    : Exit the application.")
                     print(f"{COLOR_BLUE}--------------------------{COLOR_RESET}")
 
