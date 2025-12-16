@@ -10,7 +10,7 @@ def main():
     entries = load_entries()
     active = entries
 
-    print(f"\n\n{STYLE_BOLD}{COLOR_BRIGHT_BLUE}{' MEASUREMENTS LOGBOOK ':=^80}{COLOR_RESET}")
+    print(f"{STYLE_BOLD}{COLOR_BRIGHT_BLUE}{' MEASUREMENTS LOGBOOK ':=^80}{COLOR_RESET}")
     print(f"Github repository: {STYLE_ITALIC}https://github.com/andrea-micelli/data-logbook.git{COLOR_RESET}")
     print(f"Current verion: {STYLE_ITALIC}v{__version__}{COLOR_RESET}\n")
 
