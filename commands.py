@@ -48,15 +48,13 @@ def view_entry(choice_index, entries_list):
     if 0 <= choice_index < len(entries_list):
         selected_entry = entries_list[choice_index]
 
-        print(f"\n{COLOR_BLUE}=============================================")
-        print(f"Title:       {selected_entry.get('title')}")
-        print(f"Timestamp:   {format_timestamp(selected_entry.get('timestamp'))}")
-        print(f"Folder:      {selected_entry.get('data_folder')}")
-        print(f"File:        {ENTRY_FILENAME}")
-        print(f"============================================={COLOR_RESET}")
-        print("\nDescription (Raw Markdown):")
+        print()
+        print(f"{COLOR_CYAN}Title:{COLOR_RESET}       {STYLE_BOLD}{selected_entry.get('title')}{COLOR_RESET}")
+        print(f"{COLOR_CYAN}Timestamp:{COLOR_RESET}   {format_timestamp(selected_entry.get('timestamp'))}")
+        print(f"{COLOR_CYAN}Folder:{COLOR_RESET}      {selected_entry.get('data_folder')}")
+        print(f"{COLOR_CYAN}File:{COLOR_RESET}        {ENTRY_FILENAME}")
+        print("\nDescription:")
         print(selected_entry.get('description', 'N/A')) 
-        print(f"{COLOR_BLUE}============================================={COLOR_RESET}")
 
         return False # No deletion happened
 
