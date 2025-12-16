@@ -17,7 +17,7 @@ def load_config():
 
         print("A config.yaml file has been created.")
         print("Please edit it and set 'data_dir' to a valid path.")
-        input("\nPress any button...")
+        input("\nPress any button to close...")
         sys.exit(1)
 
     with open(CONFIG_PATH, "r") as f:
@@ -25,6 +25,10 @@ def load_config():
 
     data_dir = Path(config["data_dir"])
     if not data_dir.exists():
+        print(f"Configured data directory does not exist: {data_dir}")
+        print("Please edit the 'data_dir' field in the 'config.yaml' file.")
+        print("\nPress any button to close...")
+        input()
         raise ValueError(f"Configured data_dir does not exist: {data_dir}")
 
     return data_dir
