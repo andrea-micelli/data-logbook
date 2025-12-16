@@ -29,14 +29,14 @@ def load_config():
     if not data_dir.exists():
         print(f"Configured data directory does not exist: {data_dir}")
         print("Please edit the 'data_dir' field in the 'config.yaml' file.")
-        print("\nPress any button to close...")
-        input()
+        input("\nPress any button to close...")
         raise ValueError(f"Configured data_dir does not exist: {data_dir}")
 
     try:
         data_filename = config["data_filename"]
     except KeyError:
         print(f"{COLOR_RED}[Error] Could not retreive data_filename from config.yaml. Check that Config.yaml is correctly formatted.{COLOR_RESET}")
+        input("\nPress any button to close...")
         sys.exit(1)
 
     return data_dir, data_filename
