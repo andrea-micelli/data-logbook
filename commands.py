@@ -1,9 +1,9 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_CYAN, COLOR_RESET, ENTRY_FILENAME, FRONT_MATTER_DELIMITER # noqa: F401
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_CYAN, COLOR_RESET, FRONT_MATTER_DELIMITER # noqa: F401
 from constants import STYLE_BOLD, STYLE_DIM # noqa: F401
 import os
 from datetime import datetime
 from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
-from init import DEFAULT_DATA_FOLDER_ROOT
+from init import DEFAULT_DATA_FOLDER_ROOT, ENTRY_FILENAME
 import sys
 import subprocess
 from utility import format_timestamp, open_folder_in_explorer

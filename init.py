@@ -1,9 +1,11 @@
+from constants import COLOR_RED, COLOR_RESET
 from pathlib import Path
 import yaml
 import sys
 
 CONFIG_PATH = Path("config.yaml")
 EXAMPLE_PATH = Path("config.example.yaml")
+DEFAULT_ENTRY_FILENAME = "log_entry.md"
 
 def load_config():
     if not CONFIG_PATH.exists():
@@ -13,7 +15,7 @@ def load_config():
         if EXAMPLE_PATH.exists():
             CONFIG_PATH.write_text(EXAMPLE_PATH.read_text())
         else:
-            CONFIG_PATH.write_text("data_dir: /path/to/your/data/folder\n")
+            CONFIG_PATH.write_text(f"data_dir: /path/to/your/data/folder\ndata_filename: {DEFAULT_ENTRY_FILENAME}")
 
         print("A config.yaml file has been created.")
         print("Please edit it and set 'data_dir' to a valid path.")
@@ -31,6 +33,12 @@ def load_config():
         input()
         raise ValueError(f"Configured data_dir does not exist: {data_dir}")
 
-    return data_dir
+    try:
+        data_filename = config["data_filename"]
+    except KeyError:
+        print(f"{COLOR_RED}[Error] Could not retreive data_filename from config.yaml. Check that Config.yaml is correctly formatted.{COLOR_RESET}")
+        sys.exit(1)
 
-DEFAULT_DATA_FOLDER_ROOT = load_config()
+    return data_dir, data_filename
+
+DEFAULT_DATA_FOLDER_ROOT, ENTRY_FILENAME = load_config()

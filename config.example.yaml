@@ -1,0 +1,5 @@
+# This is an example file of how the config.yaml should be formatted. 
+# If there is no config.yaml file in the folder, run 'run.bat' and it will create one.
+# If config.yaml exists but the script cannot read it, copy the formatting of this file to ensure that there is no errors in config.yaml.
+data_dir: C:\your\data\folder
+data_filename: log_entry.md

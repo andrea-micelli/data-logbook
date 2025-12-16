@@ -1,8 +1,8 @@
-from constants import ( COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, FRONT_MATTER_DELIMITER)  # noqa: F401
+from constants import ( COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, FRONT_MATTER_DELIMITER)  # noqa: F401
 import yaml
 import os
 from datetime import datetime
-from init import DEFAULT_DATA_FOLDER_ROOT
+from init import DEFAULT_DATA_FOLDER_ROOT, ENTRY_FILENAME
 
 # --- DATA MANAGEMENT FUNCTIONS (Unchanged) ---
 

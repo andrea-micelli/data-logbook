@@ -34,5 +34,4 @@ COLOR_RESET = '\033[0m'
 
 
 # --- CONFIGURATION ---
-ENTRY_FILENAME = 'log_entry.md'
 FRONT_MATTER_DELIMITER = '---'
