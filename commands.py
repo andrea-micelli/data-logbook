@@ -52,8 +52,19 @@ def view_entry(choice_index, entries_list):
         print(f"{COLOR_CYAN}Title:{COLOR_RESET}       {STYLE_BOLD}{selected_entry.get('title')}{COLOR_RESET}")
         print(f"{COLOR_CYAN}Timestamp:{COLOR_RESET}   {format_timestamp(selected_entry.get('timestamp'))}")
         print(f"{COLOR_CYAN}Folder:{COLOR_RESET}      {selected_entry.get('data_folder')}")
-        print(f"{COLOR_CYAN}File:{COLOR_RESET}        {ENTRY_FILENAME}")
-        print("\nDescription:")
+
+        for key in selected_entry.keys():
+            if key in ['title', 'timestamp', 'data_folder', 'description']:
+                continue
+            else:
+                if type(selected_entry.get(key)) is str:
+                    print(f"{COLOR_CYAN}{key}:{COLOR_RESET}      {selected_entry.get(key)}")
+                if type(selected_entry.get(key)) is list:
+                    print(f"{COLOR_CYAN}{key}:{COLOR_RESET}      ", end='')
+                    [print(n, end=', ') for n in selected_entry.get(key)[:-1]]
+                    print(selected_entry.get(key)[-1])
+
+        print(f"\n{COLOR_CYAN}Description:{COLOR_RESET}")
         print(selected_entry.get('description', 'N/A')) 
 
         return False # No deletion happened
@@ -194,6 +205,9 @@ def create_entry(entries):
         print(f"{COLOR_RED}[Error] Title cannot be empty.{COLOR_RESET}")
         title = input(f"{COLOR_YELLOW}Enter Title (Required): {COLOR_RESET}").strip()
 
+    samples = input("Samples (comma separated):")
+    samples = [ sample.strip() for sample in samples.split(",") ]
+
     # 2. Description (Markdown Body)
     description = []
     print(f"{COLOR_YELLOW}Enter Description (Multi-line input, press Enter on an empty line to finish):{COLOR_RESET}")
@@ -215,6 +229,7 @@ def create_entry(entries):
     # 4. Create the new entry dictionary (metadata)
     new_entry = {
         'timestamp': timestamp,
+        'sample': samples,
         'title': title,
         'data_folder': data_folder, 
     }
@@ -229,6 +244,7 @@ def create_entry(entries):
 
 def filter_entries(entries, field, value):
     active = list()
+    print(field, value)
     for e in entries:
         ans = e.get(field, "")
         if value in ans:
