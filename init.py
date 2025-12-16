@@ -17,6 +17,7 @@ def load_config():
 
         print("A config.yaml file has been created.")
         print("Please edit it and set 'data_dir' to a valid path.")
+        input("\nPress any button...")
         sys.exit(1)
 
     with open(CONFIG_PATH, "r") as f:
