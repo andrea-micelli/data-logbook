@@ -7,6 +7,7 @@ from init import DEFAULT_DATA_FOLDER_ROOT
 # --- DATA MANAGEMENT FUNCTIONS (Unchanged) ---
 
 def parse_markdown_entry(content):
+    # TODO make error detection more robust
     """
     Parses a Markdown file content string expecting YAML Front Matter.
     Returns a tuple: (metadata_dict, markdown_body)
@@ -35,10 +36,7 @@ def load_entries():
     entries = []
 
     if not os.path.exists(DEFAULT_DATA_FOLDER_ROOT):
-        print(
-            f"{COLOR_YELLOW}Data directory '{DEFAULT_DATA_FOLDER_ROOT}' not found. No entries loaded.{COLOR_RESET}"
-        )
-        os.makedirs(DEFAULT_DATA_FOLDER_ROOT, exist_ok=True)
+        print(f"{COLOR_YELLOW}Data directory '{DEFAULT_DATA_FOLDER_ROOT}' not found. No entries loaded.{COLOR_RESET}")
         return []
 
     # os.walk yields (dirpath, dirnames, filenames)
@@ -56,7 +54,6 @@ def load_entries():
                 with open(entry_file_path, "r") as f:
                     content = f.read()
 
-                # Assuming parse_markdown_entry is defined elsewhere and works as before
                 metadata, description = parse_markdown_entry(content)
 
                 if "title" in metadata and "timestamp" in metadata:
@@ -75,9 +72,9 @@ def load_entries():
                 )
 
         # If ENTRY_FILENAME is NOT in filenames, os.walk will continue into subdirectories
-        # defined in dirnames, which is the desired recursive behavior.
+        # defined in dirnames
 
-    entries.sort(key=lambda x: x.get("timestamp", datetime.min), reverse=True)
+    entries.sort(key=lambda x: x.get("timestamp", datetime.min) if type(x.get("timestamp", datetime.min)) is datetime else datetime.min, reverse=True)
     return entries
 
 
