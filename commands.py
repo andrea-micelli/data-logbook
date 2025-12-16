@@ -1,4 +1,5 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, ENTRY_FILENAME, FRONT_MATTER_DELIMITER # noqa: F401
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_CYAN, COLOR_RESET, ENTRY_FILENAME, FRONT_MATTER_DELIMITER # noqa: F401
+from constants import STYLE_BOLD, STYLE_DIM # noqa: F401
 import os
 from datetime import datetime
 from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
@@ -13,13 +14,13 @@ from utility import format_timestamp, open_folder_in_explorer
 def list_entries(entries, filter):
     """Displays a numbered, chronological list of all entries (title and date)."""
     print()  # newline as spacing
+    print(f"{COLOR_CYAN}Active filters:{COLOR_RESET}", end=" ")
     if filter:
-        print("Filters: ", end="")
         for key in filter.keys():
-            print(f"{key}:{filter[key]}  ", end="")
+            print(f"{STYLE_BOLD}{key}{COLOR_RESET}={filter[key]}", end="  ")
         print()
     else: 
-        print("No current filter")
+        print("No active filters")
 
     if not entries:
         print(f"\n{COLOR_YELLOW}--- Logbook is Empty ---")
@@ -28,13 +29,14 @@ def list_entries(entries, filter):
 
     sorted_entries = entries 
 
-    print(f"{COLOR_BLUE}No. | {"Date":^10} | Title")
-    print(f"-----------------------------------------------------------------{COLOR_RESET}")
+    print(f"{COLOR_BLUE}{STYLE_BOLD}{"":-<80}{COLOR_RESET}")
+    print(f"{COLOR_BLUE}{STYLE_BOLD} N | {"Date":^10} | Title{COLOR_RESET}")
+    print(f"{COLOR_BLUE}{STYLE_BOLD}{"":-<80}{COLOR_RESET}")
     for i, entry in enumerate(sorted_entries):
         index = i + 1
         date_str = format_timestamp(entry.get('timestamp'))
         title = entry.get('title', 'NO TITLE')
-        print(f"{index:<3} | {date_str:<10} | {COLOR_BLUE}{title[:45]:<45}{COLOR_RESET}")
+        print(f"{index:^3}{STYLE_DIM}|{COLOR_RESET} {date_str:<10} {STYLE_DIM}|{COLOR_RESET} {STYLE_BOLD}{title[:45]:<45}{COLOR_RESET}")
 
     return sorted_entries
 
@@ -196,7 +198,7 @@ def create_entry(entries):
 
     # 2. Description (Markdown Body)
     description = []
-    print(f"{COLOR_YELLOW}Enter Description (Markdown body - multi-line input, press Enter on an empty line to finish):{COLOR_RESET}")
+    print(f"{COLOR_YELLOW}Enter Description (Multi-line input, press Enter on an empty line to finish):{COLOR_RESET}")
     while True:
         line = input()
         if not line:
