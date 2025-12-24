@@ -1,12 +1,12 @@
-from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_CYAN, COLOR_RESET, FRONT_MATTER_DELIMITER # noqa: F401
-from constants import STYLE_BOLD, STYLE_DIM # noqa: F401
-import os
-from datetime import datetime
-from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
+from constants import COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_CYAN, COLOR_RESET
+from constants import STYLE_BOLD, STYLE_DIM
 from init import DEFAULT_DATA_FOLDER_ROOT, ENTRY_FILENAME
+from data_managment import parse_markdown_entry, load_entries, save_entry_metadata
+from utility import format_timestamp, open_folder_in_explorer
+from datetime import datetime
+import os
 import sys
 import subprocess
-from utility import format_timestamp, open_folder_in_explorer
 
 
 # --- INTERACTION FUNCTIONS (Updated view_entry) ---
@@ -243,13 +243,25 @@ def create_entry(entries):
 
 
 def filter_entries(entries, field, value):
-    active = list()
-    print(field, value)
+    value = value.lower()
+    active = []
+
     for e in entries:
         ans = e.get(field, "")
-        if value in ans:
-            active.append(e)
+
+        if isinstance(ans, str):
+            print(ans, value, value.lower() in ans.lower())
+            if value in ans.lower():
+                active.append(e)
+
+
+        elif isinstance(ans, list):
+            print(ans, value, value in ans)
+            if any(value in item.lower() for item in ans if isinstance(item, str)):
+                active.append(e)
+
     return active
+
 
 def reset_active(entries):
     return entries
