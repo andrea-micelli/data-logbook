@@ -5,7 +5,7 @@ import sys
 
 CONFIG_PATH = Path("config.yaml")
 EXAMPLE_PATH = Path("config.example.yaml")
-DEFAULT_ENTRY_FILENAME = "log_entry.md"
+DEFAULT_ENTRY_FILENAME = "description.md"
 
 def load_config():
     if not CONFIG_PATH.exists():

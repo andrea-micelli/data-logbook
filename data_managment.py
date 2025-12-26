@@ -1,4 +1,4 @@
-from constants import ( COLOR_BLUE, COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, FRONT_MATTER_DELIMITER)  # noqa: F401
+from constants import ( COLOR_GREEN, COLOR_YELLOW, COLOR_RED, COLOR_RESET, FRONT_MATTER_DELIMITER)
 import yaml
 import os
 from datetime import datetime

@@ -1,7 +1,7 @@
 from constants import (COLOR_BLUE,COLOR_GREEN,COLOR_YELLOW,COLOR_RED,COLOR_BRIGHT_BLUE,COLOR_RESET,FRONT_MATTER_DELIMITER,STYLE_BOLD,STYLE_DIM,STYLE_ITALIC)  # noqa: F401
 from commands import (list_entries,view_entry,open_entry_folder,open_in_editor,edit_markdown,edit_entry,create_entry,filter_entries,reset_active)  # noqa: F401
 from data_managment import (parse_markdown_entry,load_entries,save_entry_metadata,)  # noqa: F401
-from init import ENTRY_FILENAME
+from utility import print_help, print_help_command
 import traceback
 import sys
 from version import __version__
@@ -109,16 +109,12 @@ def main():
                     list_entries(active, active_filter)
 
                 case "help" | "hp":
-                    print( "\n--- Available Commands ---")
-                    print(f"{COLOR_GREEN}new{COLOR_RESET}                   : Create a new logbook entry (creates folder and {ENTRY_FILENAME}).")
-                    print(f"{COLOR_GREEN}list{COLOR_RESET}                  : Display the chronological list of entries.")
-                    print(f"{COLOR_GREEN}show <N>{COLOR_RESET}              : Select an entry to view metadata and raw Markdown.")
-                    print(f"{COLOR_GREEN}open <N>{COLOR_RESET}              : Open the entry's folder in file explorer and select the {ENTRY_FILENAME} file.")
-                    print(f"{COLOR_GREEN}edit <N>{COLOR_RESET}              : Open the log_entry.md file in the default editor.")
-                    print(f"{COLOR_GREEN}search <field> <text>{COLOR_RESET} : Add filter.")
-                    print(f"{COLOR_GREEN}reset{COLOR_RESET}                 : Reset filters.")
-                    print(f"{COLOR_GREEN}quit (or exit){COLOR_RESET}        : Exit the application.")
-                    print( "--------------------------")
+                    if len(args) == 0:
+                        print_help()
+                    elif len(args) == 1:
+                        print_help_command(args[0])
+                    else:
+                        print("[Error] Incorrect usage. Correct usage is 'help' for the command list, or 'help <command>' for help for a specific command.")
 
                 case _:
                     print(f"{COLOR_RED}[Error] Unknown command: '{command}'. Try 'help'.{COLOR_RESET}")
